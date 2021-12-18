@@ -137,6 +137,12 @@ def anyLeaderRoles(user):
     else:
         return False
 
+def anyBasicRoles(user):
+    if 'Not Applicable' not in user.basicRoles:
+        return True
+    else:
+        return False
+
 def countBasicRoles(user):
     return len(str(user.basicRoles).split(', '))
 
@@ -145,30 +151,31 @@ def formatFlair(user):
         'isThereAnError': False,
         'types': []
     }
-    adminPresent = False
-    suppPresent = False
-    leaderPresent = False
+    adminPresent = anyAdminRoles(user)
+    suppPresent = anySuppRoles(user)
+    leaderPresent = anyLeaderRoles(user)
+    basicPresent = anyBasicRoles(user)
     flairText = ' '
-    if anyAdminRoles(user):
-        adminPresent = True
-        flairText += user.adminRoles[0] + ' - '
-    if anySuppRoles(user):
-        suppPresent = True
+    if adminPresent:
+        flairText += user.adminRoles[0]
+        if suppPresent or leaderPresent or basicPresent:
+            flairText += ' - '
+    if suppPresent:
         flairText += user.suppRoles[0]
-        if adminPresent:
+        if adminPresent and (leaderPresent or basicPresent):
             flairText += '; '
-        else:
+        elif leaderPresent or basicPresent:
             flairText += ' - '
-    if anyLeaderRoles(user):
-        leaderPresent = True
+    if leaderPresent:
         flairText += user.leaderRoles[0]
-        if adminPresent or suppPresent:
+        if (adminPresent or suppPresent) and basicPresent:
             flairText += '; '
-        else:
+        elif basicPresent:
             flairText += ' - '
-    for role in user.basicRoles:
-        flairText += str(role) + ', '
-    flairText = flairText.strip()[:-1]
+    if basicPresent:
+        for role in user.basicRoles:
+            flairText += str(role) + ', '
+        flairText = flairText.strip()[:-1]
 
     templ = ''
     if adminPresent:
@@ -259,7 +266,8 @@ def getRoleCount(user):
         count += 1
     if anyLeaderRoles(user):
         count += 1
-    count += countBasicRoles(user)
+    if anyBasicRoles(user):
+        count += countBasicRoles(user)
     return count
 
 def get_new_request_count():
