@@ -3,6 +3,7 @@ from prawcore.exceptions import NotFound
 import trello
 import time
 import configparser
+import unicodedata
 
 ########################################
 ############### CLIENTS ################
@@ -230,19 +231,20 @@ def get_user_request(card):
 
     descriptions = str(card.description).splitlines()
     for line in descriptions:
+        line = unicodedata.normalize("NFKD", line)
         temp = line.split('** ')
         if 'From' in line:
-            username = temp[1]
+            username = temp[1].strip()
         if 'Administrative Role' in line:
-            adminRoles.append(temp[1])
+            adminRoles.append(temp[1].strip())
         if 'Supplementary Role' in line:
-            suppRoles.append(temp[1])
+            suppRoles.append(temp[1].strip())
         if 'Student Leader Role' in line:
-            leaderRoles.append(temp[1])
+            leaderRoles.append(temp[1].strip())
         if 'Standard Role' in line:
             basicRoles = temp[1].split(', ')
         if 'Requested Emoji' in line:
-            temp = line.split(': **')[1].replace('**', '')
+            temp = line.split(': **')[1].replace('**', '').strip()
             if '****' in line:
                 temp = "Not Applicable"
             requestedEmoji = temp
