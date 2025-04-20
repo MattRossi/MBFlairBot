@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "mbflairbot"
+version = "0.1.0"
+description = ""
+package-mode = false
+authors = ["Matthew Rossi <12902926+MattRossi@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+praw = "^7.8.1"
+py-trello-api = "^0.20.0"
+
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
